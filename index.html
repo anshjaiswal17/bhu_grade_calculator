@@ -77,6 +77,9 @@
         border-top: 2px solid #eee;
         padding-top: 10px;
     }
+       .ancillary {
+    display: block;
+}
 </style>
 <body>
     <div class="headline">
@@ -226,6 +229,25 @@
     <div id="result"></div>
 
     <script>
+        // Function to toggle ancillary section visibility
+    function toggleAncillary() {
+        const faculty = document.getElementById('faculty').value;
+        const ancillarySection = document.querySelector('.ancillary');
+        
+        // Hide ancillary section if faculty is ARTS
+        if (faculty === "ARTS") {
+            ancillarySection.style.display = 'none';
+        } else {
+            ancillarySection.style.display = 'block';
+        }
+    }
+
+    // Attach event listener to faculty dropdown
+    document.getElementById('faculty').addEventListener('change', toggleAncillary);
+
+    // Call the function on page load to set initial visibility
+    window.onload = toggleAncillary;
+
         function calculateGrade() {
             // Get personal info
             const name = document.getElementById('Name').value;
