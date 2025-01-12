@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grade Calculator</title>
     <link rel="icon" href="C:/Users/atma9/OneDrive/Desktop/BHU GRADE CALCULATOR/sitefav.ico">
+    
+    
 </head>
 <style>
     body {
@@ -77,9 +79,16 @@
         border-top: 2px solid #eee;
         padding-top: 10px;
     }
-       .ancillary {
+    .ancillary {
     display: block;
 }
+
+.softskills {
+    margin: 10px;
+    padding: 10px;
+    display: none;
+}
+
 </style>
 <body>
     <div class="headline">
@@ -106,6 +115,7 @@
                 <option value="4">4</option>
                 <option value="5">5</option>
                 <option value="6">6</option>
+                
             </select>
         </div>
         <br>
@@ -125,9 +135,10 @@
         <div class="subject-info2">
             <label for="subject2">Subject 2:</label>
             <select name="subject-info2" id="subject2" required>
-               <option value="MTB-102">MTB-102:GEOMETRY</option>
+                <option value="MTB-102">MTB-102:GEOMETRY</option>
                 <option value="MTB-202">MTB-202:STATIC & DYNAMIC</option>
                 <option value="MTB-302">MTB 302:DIFFERENTIAL EQUATIONS</option>
+                
             </select>
             <label for="subject2-marks">Enter marks:</label>
             <input type="number" id="subject2-marks" name="subject2-marks" required oninput="this.value = Math.abs(this.value)">
@@ -136,7 +147,7 @@
         <div class="subject-info3">
             <label for="subject3">Subject 3:</label>
             <select name="subject-info3" id="subject3" required>
-                 <option value="STA-101">STA-101:STATISTICS</option>
+                <option value="STA-101">STA-101:STATISTICS</option>
                 <option value="STA-201">STA-201:DESCRIPTIVE STATISTICS</option>
                 <option value="STA-201">STA-301:STATISTICAL INFERENCE</option>
             </select>
@@ -147,9 +158,10 @@
         <div class="subject-info4">
             <label for="subject4">Subject 4:</label>
             <select name="subject-info4" id="subject4" required>
-              <option value="STA-102">STA-102:PRACTICALS BASED ON COURSE NO. STB–101</option>
+                <option value="STA-102">STA-102:PRACTICALS BASED ON COURSE NO. STB–101</option>
                 <option value="STA-202">STA-202:PRACTICALS BASED ON COURSE NO. STB–201 </option>
                 <option value="STA-302">STA-302:PRACTICALS BASED ON COURSE NO. STB–301</option>
+
             </select>
             <label for="subject4-marks">Enter marks:</label>
             <input type="number" id="subject4-marks" name="subject4-marks" required oninput="this.value = Math.abs(this.value)">    
@@ -158,9 +170,10 @@
         <div class="subject-info5">
             <label for="subject5">Subject 5:</label>
             <select name="subject-info5" id="subject5" required>
-               <option value="ECB-101">ECB-101:MICROECONOMICS</option>
+                <option value="ECB-101">ECB-101:MICROECONOMICS</option>
                 <option value="ECB-201">ECB-201:TECHNIQUES OF ECONOMIC ANALYSIS</option>
                 <option value="ECB-301">ECB-301: MONEY,BANKING AND FINANCIAL MARKET</option>
+
             </select>
             <label for="subject5-marks">Enter marks:</label>
             <input type="number" id="subject5-marks" name="subject5-marks" required oninput="this.value = Math.abs(this.value)">
@@ -169,9 +182,10 @@
         <div class="subject-info6">
             <label for="subject6">Subject 6:</label>
             <select name="subject-info6" id="subject6" required>
-               <option value="ECB-102">ECB-102:MACROECONOMICS</option>
+                <option value="ECB-102">ECB-102:MACROECONOMICS</option>
                 <option value="ECB-202">ECB-202:HISTORY OF ECONOMIC THOUGHT</option>
                 <option value="ECB-302">ECB-302:PUBLIC ECONOMICS</option>
+                 
             </select>
             <label for="subject6-marks">Enter marks:</label>
             <input type="number" id="subject6-marks" name="subject6-marks" required oninput="this.value = Math.abs(this.value)">
@@ -194,6 +208,15 @@
             <label for="ancillary-marks">Enter marks:</label>
             <input type="number" id="ancillary-marks" name="ancillary-marks" required oninput="this.value = Math.abs(this.value)">
         </div>
+        <br>
+        <div class="softskills">
+            <label for="softskills">Softskills:</label>
+            <select name="softskills" id="softskills">
+                <option value="softskills">SOFTSKILLS</option>
+            </select>
+            <label for="softskills">Enter marks:</label>
+            <input type="number" id="softskills-marks" name="softskills-marks" required oninput="this.value = Math.abs(this.value)">
+        </div>
         </form>
         <br>
         <button type="button" onclick="calculateGrade()">Calculate Grade</button>
@@ -202,172 +225,181 @@
     <div id="result"></div>
 
     <script>
-        // Function to toggle ancillary section visibility
+    // Function to toggle ancillary section visibility
     function toggleAncillary() {
         const faculty = document.getElementById('faculty').value;
+        const semester = parseInt(document.getElementById('semester').value);
         const ancillarySection = document.querySelector('.ancillary');
+        const softskillsSection = document.querySelector('.softskills');
         
-        // Hide ancillary section if faculty is ARTS
+        // Hide ancillary for ARTS faculty
         if (faculty === "ARTS") {
             ancillarySection.style.display = 'none';
+            // Show softskills for semester 3 or higher
+            if (semester >= 3) {
+                softskillsSection.style.display = 'block';
+            } else {
+                softskillsSection.style.display = 'none';
+            }
         } else {
             ancillarySection.style.display = 'block';
+            softskillsSection.style.display = 'none';
         }
     }
 
-    // Attach event listener to faculty dropdown
+    // Add event listeners for both faculty and semester changes
     document.getElementById('faculty').addEventListener('change', toggleAncillary);
+    document.getElementById('semester').addEventListener('change', toggleAncillary);
 
-    // Call the function on page load to set initial visibility
-    window.onload = toggleAncillary;
+    function calculateGrade() {
+        // Get personal info
+        const name = document.getElementById('Name').value;
+        const faculty = document.getElementById('faculty').value;
+        const semester = document.getElementById('semester').value;
+        
+        // Validate personal info
+        if (!name || !faculty || !semester) {
+            alert('Please fill in all required fields');
+            return;
+        }
 
-        function calculateGrade() {
-            // Get personal info
-            const name = document.getElementById('Name').value;
-            const faculty = document.getElementById('faculty').value;
-            const semester = document.getElementById('semester').value;
-            
-            // Validate personal info
-            if (!name || !faculty || !semester) {
-                alert('Please fill in all required fields');
+        // Get selected subjects and their marks
+        const subjects = {
+            subject1: {
+                name: document.getElementById('subject1').options[document.getElementById('subject1').selectedIndex].text,
+                marks: Number(document.getElementById('subject1-marks').value)
+            },
+            subject2: {
+                name: document.getElementById('subject2').options[document.getElementById('subject2').selectedIndex].text,
+                marks: Number(document.getElementById('subject2-marks').value)
+            },
+            subject3: {
+                name: document.getElementById('subject3').options[document.getElementById('subject3').selectedIndex].text,
+                marks: Number(document.getElementById('subject3-marks').value)
+            },
+            subject4: {
+                name: document.getElementById('subject4').options[document.getElementById('subject4').selectedIndex].text,
+                marks: Number(document.getElementById('subject4-marks').value)
+            },
+            subject5: {
+                name: document.getElementById('subject5').options[document.getElementById('subject5').selectedIndex].text,
+                marks: Number(document.getElementById('subject5-marks').value)
+            },
+            subject6: {
+                name: document.getElementById('subject6').options[document.getElementById('subject6').selectedIndex].text,
+                marks: Number(document.getElementById('subject6-marks').value)
+            },
+            language: {
+                name: document.getElementById('language').options[document.getElementById('language').selectedIndex].text,
+                marks: Number(document.getElementById('language-marks').value)
+            }
+        };
+
+        // Only add softskills if faculty is ARTS and semester >= 3
+        if (faculty === "ARTS" && parseInt(semester) >= 3) {
+            subjects.softskills = {
+                name: document.getElementById('softskills').options[document.getElementById('softskills').selectedIndex].text,
+                marks: Number(document.getElementById('softskills-marks').value)
+            };
+        }
+
+        // Validate marks
+        for (let subject in subjects) {
+            if (subjects[subject].marks < 0 || subjects[subject].marks > 100 || isNaN(subjects[subject].marks)) {
+                alert(`Please enter valid marks between 0 and 100 for ${subjects[subject].name}`);
                 return;
             }
-
-            // Get selected subjects and their marks
-            const subjects = {
-                subject1: {
-                    name: document.getElementById('subject1').options[document.getElementById('subject1').selectedIndex].text,
-                    marks: Number(document.getElementById('subject1-marks').value)
-                },
-                subject2: {
-                    name: document.getElementById('subject2').options[document.getElementById('subject2').selectedIndex].text,
-                    marks: Number(document.getElementById('subject2-marks').value)
-                },
-                subject3: {
-                    name: document.getElementById('subject3').options[document.getElementById('subject3').selectedIndex].text,
-                    marks: Number(document.getElementById('subject3-marks').value)
-                },
-                subject4: {
-                    name: document.getElementById('subject4').options[document.getElementById('subject4').selectedIndex].text,
-                    marks: Number(document.getElementById('subject4-marks').value)
-                },
-                subject5: {
-                    name: document.getElementById('subject5').options[document.getElementById('subject5').selectedIndex].text,
-                    marks: Number(document.getElementById('subject5-marks').value)
-                },
-                subject6: {
-                    name: document.getElementById('subject6').options[document.getElementById('subject6').selectedIndex].text,
-                    marks: Number(document.getElementById('subject6-marks').value)
-                },
-                language: {
-                    name: document.getElementById('language').options[document.getElementById('language').selectedIndex].text,
-                    marks: Number(document.getElementById('language-marks').value)
-                }
-            };
-
-            // Only add ancillary if faculty is not ARTS
-            if (faculty !== "ARTS") {
-                subjects.ancillary = {
-                    name: document.getElementById('ancillary').options[document.getElementById('ancillary').selectedIndex].text,
-                    marks: Number(document.getElementById('ancillary-marks').value)
-                };
-            }
-
-            // Validate marks
-            for (let subject in subjects) {
-                if (subjects[subject].marks < 0 || subjects[subject].marks > 100 || isNaN(subjects[subject].marks)) {
-                    alert(`Please enter valid marks between 0 and 100 for ${subjects[subject].name}`);
-                    return;
-                }
-            }
-
-            // Define credits
-            const credits = {
-                subject1: 3,
-                subject2: 3,
-                subject3: 4,
-                subject4: 2,
-                subject5: 3,
-                subject6: 3,
-                language: 3
-            };
-
-            // Add ancillary credits only if not ARTS
-            if (faculty !== "ARTS") {
-                credits.ancillary = 3;
-            }
-
-            // Calculate grade points
-            const getGradePoints = (marks) => {
-                if (marks >= 90) return 10;
-                if (marks >= 80) return 9;
-                if (marks >= 70) return 8;
-                if (marks >= 60) return 7;
-                if (marks >= 50) return 6;
-                if (marks >= 40) return 5;
-                return 0;
-            };
-
-            // Calculate grade points for each subject
-            const gradePoints = {};
-            for (let subject in subjects) {
-                gradePoints[subject] = getGradePoints(subjects[subject].marks);
-            }
-
-            // Calculate total credits and grade points
-            const totalCredits = Object.values(credits).reduce((sum, credit) => sum + credit, 0);
-            let totalGradePoints = 0;
-            for (let subject in subjects) {
-                totalGradePoints += credits[subject] * gradePoints[subject];
-            }
-
-            const cgpa = (totalGradePoints / totalCredits).toFixed(2);
-
-            // Get letter grade
-            const getLetterGrade = (gradePoints) => {
-                if (gradePoints === 10) return 'S';
-                if (gradePoints === 9) return 'A';
-                if (gradePoints === 8) return 'B';
-                if (gradePoints === 7) return 'C';
-                if (gradePoints === 6) return 'D';
-                if (gradePoints === 5) return 'E';
-                return 'F';
-            };
-
-            // Create result HTML
-            let resultHTML = `
-                <h3>Results:</h3>
-                <p>Name: ${name}</p>
-                <p>Faculty: ${faculty}</p>
-                <p>Semester: ${semester}</p>
-            `;
-
-            // Add subject results
-            for (let subject in subjects) {
-                resultHTML += `
-                    <p>${subjects[subject].name}: ${subjects[subject].marks} 
-                       (Grade Points: ${gradePoints[subject]}, 
-                        Grade: ${getLetterGrade(gradePoints[subject])}, 
-                        Credits: ${credits[subject]})</p>
-                `;
-            }
-
-            resultHTML += `
-                <p>Total Credits: ${totalCredits}</p>
-                <p>Total Grade Points: ${totalGradePoints}</p>
-                <p>CGPA: ${cgpa}</p>
-            `;
-
-            // Create or update result div
-            const resultDiv = document.getElementById('result') || document.createElement('div');
-            resultDiv.id = 'result';
-            resultDiv.innerHTML = resultHTML;
-            
-            // Append resultDiv if it doesn't exist in the document
-            if (!document.getElementById('result')) {
-                document.body.appendChild(resultDiv);
-            }
         }
+
+        // Define credits
+        const credits = {
+            subject1: 3,
+            subject2: 3,
+            subject3: 4,
+            subject4: 2,
+            subject5: 3,
+            subject6: 3,
+            language: 3
+        };
+
+        // Add credits based on faculty and semester
+        if (faculty === "ARTS" && parseInt(semester) >= 3) {
+            credits.softskills = 3;
+        } else if (faculty !== "ARTS") {
+            credits.ancillary = 3;
+        }
+
+        // Calculate grade points
+        const getGradePoints = (marks) => {
+            if (marks >= 90) return 10;
+            if (marks >= 80) return 9;
+            if (marks >= 70) return 8;
+            if (marks >= 60) return 7;
+            if (marks >= 50) return 6;
+            if (marks >= 40) return 5;
+            return 0;
+        };
+
+        // Calculate grade points for each subject
+        const gradePoints = {};
+        for (let subject in subjects) {
+            gradePoints[subject] = getGradePoints(subjects[subject].marks);
+        }
+
+        // Calculate total credits and grade points
+        const totalCredits = Object.values(credits).reduce((sum, credit) => sum + credit, 0);
+        let totalGradePoints = 0;
+        for (let subject in subjects) {
+            totalGradePoints += credits[subject] * gradePoints[subject];
+        }
+
+        const cgpa = (totalGradePoints / totalCredits).toFixed(2);
+
+        // Get letter grade
+        const getLetterGrade = (gradePoints) => {
+            if (gradePoints === 10) return 'S';
+            if (gradePoints === 9) return 'A';
+            if (gradePoints === 8) return 'B';
+            if (gradePoints === 7) return 'C';
+            if (gradePoints === 6) return 'D';
+            if (gradePoints === 5) return 'E';
+            return 'F';
+        };
+
+        // Create result HTML
+        let resultHTML = `
+            <h3>Results:</h3>
+            <p>Name: ${name}</p>
+            <p>Faculty: ${faculty}</p>
+            <p>Semester: ${semester}</p>
+        `;
+
+        // Add subject results
+        for (let subject in subjects) {
+            resultHTML += `
+                <p>${subjects[subject].name}: ${subjects[subject].marks} 
+                   (Grade Points: ${gradePoints[subject]}, 
+                    Grade: ${getLetterGrade(gradePoints[subject])}, 
+                    Credits: ${credits[subject]})</p>
+            `;
+        }
+
+        resultHTML += `
+            <p>Total Credits: ${totalCredits}</p>
+            <p>Total Grade Points: ${totalGradePoints}</p>
+            <p>CGPA: ${cgpa}</p>
+        `;
+
+        // Create or update result div
+        const resultDiv = document.getElementById('result') || document.createElement('div');
+        resultDiv.id = 'result';
+        resultDiv.innerHTML = resultHTML;
+        
+        // Append resultDiv if it doesn't exist in the document
+        if (!document.getElementById('result')) {
+            document.body.appendChild(resultDiv);
+        }
+    }
     </script>
 </body>
 </html>
