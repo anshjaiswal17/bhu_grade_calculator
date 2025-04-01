@@ -202,8 +202,8 @@
         <br>
         <div class="ancillary">
             <label for="ancillary">Ancillary:</label>
-            <select name="ancillary" id="ancillary">
-                <option value="ANCILLARY">ANCILLARY</option>
+            <select name="ancillary" id="ancillary">    
+                <option value="ANCILLARY">ANCILLARY</option>  
             </select>
             <label for="ancillary-marks">Enter marks:</label>
             <input type="number" id="ancillary-marks" name="ancillary-marks" required oninput="this.value = Math.abs(this.value)">
@@ -295,6 +295,14 @@
             }
         };
 
+        // Add ancillary for SOCIAL SCIENCES faculty
+        if (faculty === "SOCIAL SCIENCES") {
+            subjects.ancillary = {
+                name: "ANCILLARY",
+                marks: Number(document.getElementById('ancillary-marks').value)
+            };
+        }
+
         // Only add softskills if faculty is ARTS and semester >= 3
         if (faculty === "ARTS" && parseInt(semester) >= 3) {
             subjects.softskills = {
@@ -325,7 +333,7 @@
         // Add credits based on faculty and semester
         if (faculty === "ARTS" && parseInt(semester) >= 3) {
             credits.softskills = 3;
-        } else if (faculty !== "ARTS") {
+        } else if (faculty === "SOCIAL SCIENCES") {
             credits.ancillary = 3;
         }
 
