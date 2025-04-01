@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grade Calculator</title>
     <link rel="icon" href="C:/Users/atma9/OneDrive/Desktop/BHU GRADE CALCULATOR/sitefav.ico">
-    
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/vfs_fonts.js"></script>
 </head>
 <style>
     body {
@@ -87,6 +87,20 @@
     margin: 10px;
     padding: 10px;
     display: none;
+}
+
+#downloadBtn {
+    margin: 20px;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#downloadBtn:hover {
+    background-color: #45a049;
 }
 
 </style>
@@ -223,8 +237,27 @@
     </form>
 
     <div id="result"></div>
+    <button id="downloadBtn" style="display: none;" onclick="downloadGradeCard()">Download Grade Card</button>
 
     <script>
+    // Add these variables at the top of your script section, outside any function
+    let globalSubjects = {};
+    let globalGradePoints = {};
+    let globalTotalCredits = 0;
+    let globalCgpa = 0;
+    let globalCredits = {};
+
+    // Add getLetterGrade as a global function
+    function getLetterGrade(gradePoints) {
+        if (gradePoints === 10) return 'S';
+        if (gradePoints === 9) return 'A';
+        if (gradePoints === 8) return 'B';
+        if (gradePoints === 7) return 'C';
+        if (gradePoints === 6) return 'D';
+        if (gradePoints === 5) return 'E';
+        return 'F';
+    }
+
     // Function to toggle ancillary section visibility
     function toggleAncillary() {
         const faculty = document.getElementById('faculty').value;
@@ -337,6 +370,9 @@
             credits.ancillary = 3;
         }
 
+        // Store credits globally
+        globalCredits = credits;
+
         // Calculate grade points
         const getGradePoints = (marks) => {
             if (marks >= 90) return 10;
@@ -362,17 +398,6 @@
         }
 
         const cgpa = (totalGradePoints / totalCredits).toFixed(2);
-
-        // Get letter grade
-        const getLetterGrade = (gradePoints) => {
-            if (gradePoints === 10) return 'S';
-            if (gradePoints === 9) return 'A';
-            if (gradePoints === 8) return 'B';
-            if (gradePoints === 7) return 'C';
-            if (gradePoints === 6) return 'D';
-            if (gradePoints === 5) return 'E';
-            return 'F';
-        };
 
         // Create result HTML
         let resultHTML = `
@@ -406,6 +431,154 @@
         // Append resultDiv if it doesn't exist in the document
         if (!document.getElementById('result')) {
             document.body.appendChild(resultDiv);
+        }
+
+        // Show download button after results are displayed
+        const downloadBtn = document.getElementById('downloadBtn');
+        downloadBtn.style.display = 'block';
+
+        // Store values globally
+        globalSubjects = subjects;
+        globalGradePoints = gradePoints;
+        globalTotalCredits = totalCredits;
+        globalCgpa = cgpa;
+    }
+
+    function downloadGradeCard() {
+        try {
+            const name = document.getElementById('Name').value;
+            const faculty = document.getElementById('faculty').value;
+            const semester = document.getElementById('semester').value;
+
+            // Define the document content with modern styling
+            const docDefinition = {
+                pageSize: 'A4',
+                pageMargins: [40, 60, 40, 60],
+                content: [
+                    {
+                        text: 'BANARAS HINDU UNIVERSITY',
+                        style: 'header',
+                        margin: [0, 0, 0, 5]
+                    },
+                    {
+                        text: 'Grade Card',
+                        style: 'subheader',
+                        margin: [0, 0, 0, 20]
+                    },
+                    {
+                        layout: 'lightHorizontalLines',
+                        table: {
+                            widths: ['auto', '*'],
+                            body: [
+                                ['Name', { text: name, bold: false }],
+                                ['Faculty', { text: faculty, bold: false }],
+                                ['Semester', { text: semester, bold: false }]
+                            ]
+                        },
+                        margin: [0, 0, 0, 20]
+                    },
+                    {
+                        text: 'Academic Performance',
+                        style: 'subheader',
+                        margin: [0, 0, 0, 10]
+                    },
+                    {
+                        layout: {
+                            hLineWidth: function(i, node) { return 0.5; },
+                            vLineWidth: function(i, node) { return 0.5; },
+                            hLineColor: function(i, node) { return '#aaa'; },
+                            vLineColor: function(i, node) { return '#aaa'; },
+                            paddingLeft: function(i, node) { return 8; },
+                            paddingRight: function(i, node) { return 8; },
+                            paddingTop: function(i, node) { return 8; },
+                            paddingBottom: function(i, node) { return 8; }
+                        },
+                        table: {
+                            headerRows: 1,
+                            widths: ['*', 'auto', 'auto', 'auto', 'auto'],
+                            body: [
+                                [
+                                    { text: 'Subject', style: 'tableHeader' },
+                                    { text: 'Marks', style: 'tableHeader' },
+                                    { text: 'Grade Points', style: 'tableHeader' },
+                                    { text: 'Grade', style: 'tableHeader' },
+                                    { text: 'Credits', style: 'tableHeader' }
+                                ]
+                            ]
+                        }
+                    }
+                ],
+                styles: {
+                    header: {
+                        fontSize: 20,
+                        bold: true,
+                        alignment: 'center',
+                        color: '#2c3e50'
+                    },
+                    subheader: {
+                        fontSize: 16,
+                        bold: true,
+                        alignment: 'center',
+                        color: '#34495e'
+                    },
+                    tableHeader: {
+                        bold: true,
+                        fontSize: 12,
+                        color: '#2c3e50',
+                        fillColor: '#f8f9fa'
+                    }
+                },
+                defaultStyle: {
+                    fontSize: 11,
+                    color: '#2c3e50'
+                }
+            };
+
+            // Add subject details to the table
+            const subjectRows = [];
+            for (let subject in globalSubjects) {
+                if (globalSubjects[subject].marks) {
+                    subjectRows.push([
+                        globalSubjects[subject].name,
+                        globalSubjects[subject].marks.toString(),
+                        globalGradePoints[subject].toString(),
+                        getLetterGrade(globalGradePoints[subject]),
+                        (subject in globalCredits ? globalCredits[subject].toString() : '')
+                    ]);
+                }
+            }
+            docDefinition.content[4].table.body.push(...subjectRows);
+
+            // Add summary table
+            docDefinition.content.push(
+                { text: '\n' },
+                {
+                    layout: 'lightHorizontalLines',
+                    table: {
+                        widths: ['*', 'auto'],
+                        body: [
+                            ['Total Credits', { text: globalTotalCredits.toString(), alignment: 'right' }],
+                            ['CGPA', { text: globalCgpa.toString(), alignment: 'right', bold: true }]
+                        ]
+                    },
+                    margin: [0, 10, 0, 20]
+                },
+                {
+                    text: `Generated on: ${new Date().toLocaleDateString()}`,
+                    style: 'footer',
+                    margin: [0, 20, 0, 0],
+                    alignment: 'right',
+                    fontSize: 9,
+                    italics: true
+                }
+            );
+
+            // Generate and download PDF
+            pdfMake.createPdf(docDefinition).download(`${name}_GradeCard_Sem${semester}.pdf`);
+
+        } catch (error) {
+            console.error('Error in downloadGradeCard:', error);
+            alert('Error generating PDF. Please make sure you calculate grades first.');
         }
     }
     </script>
